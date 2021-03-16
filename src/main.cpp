@@ -5,7 +5,6 @@ using namespace std;
 
 class HelloHandler : public Http::Handler {
 public:
-
     HTTP_PROTOTYPE(HelloHandler)
 
     void onRequest(const Http::Request& request, Http::ResponseWriter response) override{
@@ -23,4 +22,6 @@ int main() {
     server.init(opts);
     server.setHandler(Http::make_handler<HelloHandler>());
     server.serve();
+
+    return 0;
 }
