@@ -1,27 +1,38 @@
-#include <pistache/endpoint.h>
+setup#include <signal.h>
+#include "server.h"
 
-using namespace Pistache;
 using namespace std;
 
-class HelloHandler : public Http::Handler {
-public:
-    HTTP_PROTOTYPE(HelloHandler)
-
-    void onRequest(const Http::Request& request, Http::ResponseWriter response) override{
-        UNUSED(request);
-        response.send(Pistache::Http::Code::Ok, "Hello World\n");
+int main(int argc, char *argv[]) {
+    // This code is needed for gracefull shutdown of the server when no longer needed.
+    sigset_t signals;
+    if (sigemptyset(&signals) != 0
+        || sigaddset(&signals, SIGTERM) != 0
+        || sigaddset(&signals, SIGINT) != 0
+        || sigaddset(&signals, SIGHUP) != 0
+        || pthread_sigmask(SIG_BLOCK, &signals, nullptr) != 0) {
+        perror("install signal handler failed");
+        return 1;
     }
-};
 
-int main() {
-    Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(9080));
-    auto opts = Pistache::Http::Endpoint::options()
-        .threads(1);
+    Address address(Ipv4::any(), Port(9080));
+    Server server(address);
 
-    Http::Endpoint server(addr);
-    server.init(opts);
-    server.setHandler(Http::make_handler<HelloHandler>());
-    server.serve();
+    // Initialize and start the server
+    server.init();
+    server.start();
 
-    return 0;
+    // Code that waits for the shutdown sinal for the server
+    int signal = 0;
+    int status = sigwait(&signals, &signal);
+    if (status == 0)
+    {
+        std::cout << "received signal " << signal << std::endl;
+    }
+    else
+    {
+        std::cerr << "sigwait returns " << status << std::endl;
+    }
+
+    server.stop();
 }
