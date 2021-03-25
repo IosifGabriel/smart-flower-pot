@@ -24,6 +24,8 @@ private:
     void setupRoutes();
 
     void hello(const Rest::Request &request, Http::ResponseWriter response);
+
+    void testReadJson(const Rest::Request &request, Http::ResponseWriter response);
 };
 
 #endif //SMART_FLOWER_POT_SERVER_H
