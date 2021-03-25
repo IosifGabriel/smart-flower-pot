@@ -1,4 +1,7 @@
 #include "server.h"
+#include "utils/JSONUtils.h"
+#include "utils/Constants.h"
+#include "entities/example/Example.h"
 
 void Server::init(size_t thr) {
     auto opts = Http::Endpoint::options()
@@ -19,8 +22,16 @@ void Server::stop() {
 
 void Server::setupRoutes() {
     Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
+    Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
 }
 
 void Server::hello(const Rest::Request &request, Http::ResponseWriter response) {
     response.send(Pistache::Http::Code::Ok, "Hello World\n");
+}
+
+void Server::testReadJson(const Rest::Request &request, Http::ResponseWriter response) {
+
+    Example example = Example(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_FILE_PATH));
+
+    response.send(Pistache::Http::Code::Ok, example.getPersonalData().getLastName());
 }
