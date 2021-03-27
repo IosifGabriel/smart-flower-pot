@@ -12,6 +12,8 @@
 #include "PersonalDataExample.h"
 #include "SensorDataExample.h"
 
+using nlohmann::json;
+
 class Example {
 
 private:
@@ -52,6 +54,16 @@ public:
 
     void setEditedBy(const std::string &editedBy) {
         Example::editedBy = editedBy;
+    }
+    
+    void to_json(json& j){
+        nlohmann::json personalDataJson;
+        personalData.to_json(personalDataJson);
+        
+        nlohmann::json sensorDataJson;
+        sensorDataExample.to_json(sensorDataJson);
+        
+    	j = json{{"personalData", personalDataJson}, {"sensorData", sensorDataJson}, {"editedBy", this->editedBy}};
     }
 };
 

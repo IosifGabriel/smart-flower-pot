@@ -8,6 +8,8 @@
 #include <iostream>
 #include "../../libs/json.hpp"
 
+using nlohmann::json;
+
 class SensorDataExample {
 
 private:
@@ -48,6 +50,10 @@ public:
 
     void setTemperature(double temperature) {
         SensorDataExample::temperature = temperature;
+    }
+    
+    void to_json(json& j){
+    	j = json{{"luminosity", this->luminosity}, {"humidity", this->humidity}, {"temperature", this->temperature}};
     }
 };
 
