@@ -21,7 +21,12 @@ public:
 
         return jf;
     }
+	
+    static void writeJsonToFile(const std::string& fileName, const std::string jsonDump) {
 
+	std::ofstream ofs(fileName);
+	ofs << jsonDump << std::endl;
+    }
 };
 
 

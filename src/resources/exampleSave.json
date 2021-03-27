@@ -1,0 +1,14 @@
+{
+    "editedBy": "Alex",
+    "personalData": {
+        "address": "strada meaaa",
+        "firstName": "Alex",
+        "lastName": "Jilavu",
+        "personalIDNumber": "1232134324123"
+    },
+    "sensorData": {
+        "humidity": 7.23,
+        "luminosity": 8.35,
+        "temperature": 23.0
+    }
+}

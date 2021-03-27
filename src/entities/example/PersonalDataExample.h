@@ -7,6 +7,8 @@
 #include <string>
 #include "../../libs/json.hpp"
 
+using nlohmann::json;
+
 class PersonalDataExample {
 
 private:
@@ -58,6 +60,10 @@ public:
 
     void setPersonalIdNumber(const std::string &personalIdNumber) {
         personalIDNumber = personalIdNumber;
+    }
+    
+    void to_json(json& j){
+    	j = json{{"address", this->address}, {"firstName", this->firstName}, {"lastName", this->lastName}, {"personalIDNumber", this->personalIDNumber}};
     }
 };
 
