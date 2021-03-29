@@ -5,7 +5,6 @@
 #include "libs/json.hpp"
 
 using nlohmann::json;
-static nlohmann::json saveJson;
 
 void Server::init(size_t thr) {
     auto opts = Http::Endpoint::options()
@@ -42,11 +41,9 @@ void Server::testReadJson(const Rest::Request &request, Http::ResponseWriter res
 }
 
 void Server::testSaveJson(const Rest::Request &request, Http::ResponseWriter response) {
-	Example example = Example(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_FILE_PATH));
-	example.to_json(saveJson);
+	Example example = Example(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_FILE_PATH));	
 	
-	
-	JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_SAVE_FILE_PATH, saveJson.dump(4));
+	JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_SAVE_FILE_PATH, example.to_json().dump(4));
 	
 	response.send(Pistache::Http::Code::Ok, "Check project source folder");
 }
