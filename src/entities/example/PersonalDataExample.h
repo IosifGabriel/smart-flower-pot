@@ -62,8 +62,10 @@ public:
         personalIDNumber = personalIdNumber;
     }
     
-    void to_json(json& j){
+    nlohmann::json to_json(){
+    	nlohmann::json j;
     	j = json{{"address", this->address}, {"firstName", this->firstName}, {"lastName", this->lastName}, {"personalIDNumber", this->personalIDNumber}};
+    	return j;
     }
 };
 

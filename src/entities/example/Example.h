@@ -56,14 +56,10 @@ public:
         Example::editedBy = editedBy;
     }
     
-    void to_json(json& j){
-        nlohmann::json personalDataJson;
-        personalData.to_json(personalDataJson);
-        
-        nlohmann::json sensorDataJson;
-        sensorDataExample.to_json(sensorDataJson);
-        
-    	j = json{{"personalData", personalDataJson}, {"sensorData", sensorDataJson}, {"editedBy", this->editedBy}};
+    nlohmann::json to_json(){
+        nlohmann::json j;
+    	j = json{{"personalData", this->personalData.to_json()}, {"sensorData", this->sensorDataExample.to_json()}, {"editedBy", this->editedBy}};
+    	return j;
     }
 };
 

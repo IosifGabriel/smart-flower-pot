@@ -52,8 +52,10 @@ public:
         SensorDataExample::temperature = temperature;
     }
     
-    void to_json(json& j){
+    nlohmann::json to_json(){
+     	nlohmann::json j;
     	j = json{{"luminosity", this->luminosity}, {"humidity", this->humidity}, {"temperature", this->temperature}};
+    	return j;
     }
 };
 
