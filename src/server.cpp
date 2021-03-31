@@ -1,8 +1,9 @@
 #include "server.h"
+#include "device.h"
 
 void Server::init(size_t thr) {
     auto opts = Http::Endpoint::options()
-            .threads(static_cast<int>(thr));
+        .threads(static_cast<int>(thr));
     httpEndpoint->init(opts);
 
     setupRoutes();
@@ -22,5 +23,7 @@ void Server::setupRoutes() {
 }
 
 void Server::hello(const Rest::Request &request, Http::ResponseWriter response) {
-    response.send(Pistache::Http::Code::Ok, "Hello World\n");
+    Device::getInstance()->test();
+
+    response.send(Pistache::Http::Code::Ok, "Hello");
 }
