@@ -5,7 +5,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    // This code is needed for gracefull shutdown of the server when no longer needed.
+    // This code is needed for gracefully shutdown of the server when no longer needed.
     sigset_t signals;
     if (sigemptyset(&signals) != 0
         || sigaddset(&signals, SIGTERM) != 0
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     server.init();
     server.start();
 
-    // Code that waits for the shutdown sinal for the server
+    // Code that waits for the shutdown signal for the server
     int signal = 0;
     int status = sigwait(&signals, &signal);
     if (status == 0)
