@@ -27,8 +27,8 @@ private:
 public:
     SensorData(nlohmann::json sensorData) {
         updatedAt = sensorData["updatedAt"].get<nlohmann::json::string_t>();
-        minValue = sensorData["minValue"].get<double>());
-        maxValue = sensorData["maxValue"].get<double>());
+        minValue = sensorData["minValue"].get<double>();
+        maxValue = sensorData["maxValue"].get<double>();
         sensorType = sensorData["sensorType"].get<SensorType>();
         value = sensorData["value"].get<double>();
     }
