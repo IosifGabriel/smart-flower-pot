@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     server.init();
     server.start();
 
-    // Code that waits for the shutdown sinal for the server
+    // Code that waits for the shutdown signal for the server
     int signal = 0;
     int status = sigwait(&signals, &signal);
     if (status == 0)
