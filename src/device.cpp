@@ -22,12 +22,16 @@ void Device::deleteInstance() {
     }
 }
 
-void Device::test() {
-    std::cout << "Instance memory address:" << this << std::endl;
-}
-
 Device::Device() {
 }
 
 Device::~Device() {
+}
+
+void Device::loop() {
+    // read all values from sensors
+    // check if not in range
+    // send alarm
+    // mark alarm
+    // if in range reset alarm
 }

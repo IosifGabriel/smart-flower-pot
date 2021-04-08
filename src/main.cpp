@@ -1,8 +1,28 @@
 #include <signal.h>
+#include <thread>
+#include <chrono>
 #include "server.h"
+#include "device.h"
 #include "libs/json.hpp"
 
 using namespace std;
+
+void startHttpServer(Server *server) {
+    Address address(Ipv4::any(), Port(9080));
+    server = new Server(address);
+
+    // Initialize and start the server
+    server->init();
+    server->start();
+}
+
+void startDevice() {
+    Device::getInstance()->isRunning = true;
+    while (Device::getInstance()->isRunning) {
+        Device::getInstance()->loop();
+        this_thread::sleep_for (chrono::milliseconds (500));
+    }
+}
 
 int main(int argc, char *argv[]) {
     // This code is needed for gracefully shutdown of the server when no longer needed.
@@ -16,24 +36,24 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Address address(Ipv4::any(), Port(9080));
-    Server server(address);
+    Server *server = NULL;
+    thread serverThread(startHttpServer, server);
 
-    // Initialize and start the server
-    server.init();
-    server.start();
+    thread deviceThread(startDevice);
 
     // Code that waits for the shutdown signal for the server
     int signal = 0;
     int status = sigwait(&signals, &signal);
-    if (status == 0)
-    {
+    if (status == 0) {
         std::cout << "received signal " << signal << std::endl;
-    }
-    else
-    {
+    } else {
         std::cerr << "sigwait returns " << status << std::endl;
     }
 
-    server.stop();
+    Device::getInstance()->isRunning = false;
+    deviceThread.join();
+
+    // TODO Solve 'Segmentation fault' on exit
+    serverThread.join();
+    server->stop();
 }

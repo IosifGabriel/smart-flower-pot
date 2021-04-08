@@ -8,11 +8,13 @@ using namespace std;
 
 class Device {
 public:
+    bool isRunning = false;
+
     static Device *&getInstance();
 
     static void deleteInstance();
 
-    void test();
+    void loop();
 
 private:
     Device();
