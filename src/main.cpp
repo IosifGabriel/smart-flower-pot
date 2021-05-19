@@ -1,13 +1,16 @@
+#include <iostream>
 #include <signal.h>
 #include <thread>
 #include <chrono>
-#include "server.h"
-#include "device.h"
+#include "domain/server.h"
+#include "domain/device.h"
+#include "domain/mqtt.h"
 #include "libs/json.hpp"
 
 using namespace std;
 
 void startHttpServer(Server *server) {
+    cout << "Starting HTTP Server..\n";
     Address address(Ipv4::any(), Port(9080));
     server = new Server(address);
 
@@ -16,7 +19,13 @@ void startHttpServer(Server *server) {
     server->start();
 }
 
+void startMqttClient() {
+    cout << "Starting MQTT Client..\n";
+    MqttClient::getInstance()->connectAndListen();
+}
+
 void startDevice() {
+    cout << "Starting Event Loop..\n";
     Device::getInstance()->isRunning = true;
     while (Device::getInstance()->isRunning) {
         Device::getInstance()->loop();
@@ -39,6 +48,8 @@ int main(int argc, char *argv[]) {
     Server *server = NULL;
     thread serverThread(startHttpServer, server);
 
+    thread mqttThread(startMqttClient);
+
     thread deviceThread(startDevice);
 
     // Code that waits for the shutdown signal for the server
@@ -52,6 +63,9 @@ int main(int argc, char *argv[]) {
 
     Device::getInstance()->isRunning = false;
     deviceThread.join();
+
+    // TODO Solve 'Address already in use'
+    mqttThread.join();
 
     // TODO Solve 'Segmentation fault' on exit
     serverThread.join();

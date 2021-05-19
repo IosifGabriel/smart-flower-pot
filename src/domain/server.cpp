@@ -1,8 +1,8 @@
 #include "server.h"
-#include "utils/JSONUtils.h"
-#include "utils/Constants.h"
-#include "entities/example/Example.h"
-#include "libs/json.hpp"
+#include "../utils/JSONUtils.h"
+#include "../utils/Constants.h"
+#include "../entities/example/Example.h"
+#include "../libs/json.hpp"
 
 using nlohmann::json;
 
