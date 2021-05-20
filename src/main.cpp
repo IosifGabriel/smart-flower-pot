@@ -13,7 +13,7 @@ Server *server = NULL;
 
 void startHttpServer(Server *server) {
     cout << "Starting HTTP Server..\n";
-    Address address(Ipv4::any(), Port(9081));
+    Address address(Ipv4::any(), Port(9080));
     server = new Server(address);
 
     // Initialize and start the server
@@ -31,11 +31,11 @@ void startDevice() {
     Device::getInstance()->isRunning = true;
     while (Device::getInstance()->isRunning) {
         Device::getInstance()->loop();
-        this_thread::sleep_for (chrono::milliseconds (500));
+        this_thread::sleep_for(chrono::milliseconds(500));
     }
 }
 
-void signalHandler( int signum ) {
+void signalHandler(int signum) {
     cout << "Interrupt signal (" << signum << ") received.\n";
 
     Device::getInstance()->isRunning = false;
@@ -58,5 +58,5 @@ int main(int argc, char *argv[]) {
     thread mqttThread(startMqttClient);
     thread deviceThread(startDevice);
 
-    return 0
+    return 0;
 }
