@@ -15,6 +15,8 @@ MqttClient *&MqttClient::getInstance() {
 }
 
 void MqttClient::deleteInstance() {
+	cout << "Delete MqttClient instance\n";
+
     std::unique_lock <std::mutex> lock(m_Mutex);
     if (m_MqttClient) {
         delete m_MqttClient;
@@ -33,32 +35,32 @@ void MqttClient::connectAndListen() {
 	int port = 1883;
 	int keepalive = 60;
 	bool clean_session = true;
-    struct mosquitto *mosq = NULL;
 
 	mosquitto_lib_init();
-	mosq = mosquitto_new(NULL, clean_session, NULL);
-	if (!mosq) {
+	this->mosq = mosquitto_new(NULL, clean_session, NULL);
+	if (!this->mosq) {
 		cout << "Error: Out of memory.\n";
 		return;
 	}
 
-	mosquitto_log_callback_set(mosq, MqttClient::logCallback);
-	mosquitto_connect_callback_set(mosq, MqttClient::connectCallback);
-	mosquitto_message_callback_set(mosq, MqttClient::messageCallback);
-	mosquitto_subscribe_callback_set(mosq, MqttClient::subscribeCallback);
+	mosquitto_log_callback_set(this->mosq, MqttClient::logCallback);
+	mosquitto_connect_callback_set(this->mosq, MqttClient::connectCallback);
+	mosquitto_message_callback_set(this->mosq, MqttClient::messageCallback);
+	mosquitto_subscribe_callback_set(this->mosq, MqttClient::subscribeCallback);
 
-	if (mosquitto_connect(mosq, host, port, keepalive)) {
+	if (mosquitto_connect(this->mosq, host, port, keepalive)) {
 		cout << "Unable to connect to MQTT server.\n";
 		return ;
 	}
 
-    mosquitto_loop_forever(mosq, -1, 1);
+    mosquitto_loop_forever(this->mosq, -1, 1);
 }
 
 void MqttClient::disconnect() {
-    // TODO
-	// mosquitto_destroy(mosq);
-	// mosquitto_lib_cleanup();
+    cout << "Disconnecting MQTT Client...\n";
+
+	mosquitto_destroy(this->mosq);
+	mosquitto_lib_cleanup();
 }
 
 void MqttClient::messageCallback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message) {
@@ -72,7 +74,7 @@ void MqttClient::messageCallback(struct mosquitto *mosq, void *userdata, const s
 
 void MqttClient::connectCallback(struct mosquitto *mosq, void *userdata, int result) {
 	if(!result){
-		/* Subscribe to broker information topics on successful connect. */
+		// TODO
 		mosquitto_subscribe(mosq, NULL, "test-ip/#", 2);
 	}else{
 		fprintf(stderr, "Connect failed\n");

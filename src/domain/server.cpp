@@ -20,6 +20,8 @@ void Server::start() {
 }
 
 void Server::stop() {
+    cout << "Shutdown Server\n";
+
     httpEndpoint->shutdown();
 }
 

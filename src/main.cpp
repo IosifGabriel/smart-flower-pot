@@ -1,5 +1,5 @@
 #include <iostream>
-#include <signal.h>
+#include <csignal>
 #include <thread>
 #include <chrono>
 #include "domain/server.h"
@@ -9,9 +9,11 @@
 
 using namespace std;
 
+Server *server = NULL;
+
 void startHttpServer(Server *server) {
     cout << "Starting HTTP Server..\n";
-    Address address(Ipv4::any(), Port(9080));
+    Address address(Ipv4::any(), Port(9081));
     server = new Server(address);
 
     // Initialize and start the server
@@ -33,41 +35,28 @@ void startDevice() {
     }
 }
 
-int main(int argc, char *argv[]) {
-    // This code is needed for gracefully shutdown of the server when no longer needed.
-    sigset_t signals;
-    if (sigemptyset(&signals) != 0
-        || sigaddset(&signals, SIGTERM) != 0
-        || sigaddset(&signals, SIGINT) != 0
-        || sigaddset(&signals, SIGHUP) != 0
-        || pthread_sigmask(SIG_BLOCK, &signals, nullptr) != 0) {
-        perror("install signal handler failed");
-        return 1;
-    }
-
-    Server *server = NULL;
-    thread serverThread(startHttpServer, server);
-
-    thread mqttThread(startMqttClient);
-
-    thread deviceThread(startDevice);
-
-    // Code that waits for the shutdown signal for the server
-    int signal = 0;
-    int status = sigwait(&signals, &signal);
-    if (status == 0) {
-        std::cout << "received signal " << signal << std::endl;
-    } else {
-        std::cerr << "sigwait returns " << status << std::endl;
-    }
+void signalHandler( int signum ) {
+    cout << "Interrupt signal (" << signum << ") received.\n";
 
     Device::getInstance()->isRunning = false;
-    deviceThread.join();
+    Device::getInstance()->deleteInstance();
 
-    // TODO Solve 'Address already in use'
-    mqttThread.join();
+    MqttClient::getInstance()->disconnect();
+    MqttClient::getInstance()->deleteInstance();
 
-    // TODO Solve 'Segmentation fault' on exit
-    serverThread.join();
     server->stop();
+
+    // terminate program
+    exit(signum);
+}
+
+int main(int argc, char *argv[]) {
+    // register signal SIGINT and signal handler
+    signal(SIGINT, signalHandler);
+
+    thread serverThread(startHttpServer, server);
+    thread mqttThread(startMqttClient);
+    thread deviceThread(startDevice);
+
+    return 0
 }

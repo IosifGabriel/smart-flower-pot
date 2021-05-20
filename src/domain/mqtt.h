@@ -18,6 +18,8 @@ public:
     void disconnect();
 
 private:
+	struct mosquitto *mosq = NULL;
+
     MqttClient();
 
     ~MqttClient();

@@ -15,6 +15,8 @@ Device *&Device::getInstance() {
 }
 
 void Device::deleteInstance() {
+    cout << "Delete MqttClient instance\n";
+
     std::unique_lock <std::mutex> lock(m_Mutex);
     if (m_Device) {
         delete m_Device;
