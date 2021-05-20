@@ -37,59 +37,44 @@ void MqttClient::connectAndListen() {
 	bool clean_session = true;
 
 	mosquitto_lib_init();
-	this->mosq = mosquitto_new(NULL, clean_session, NULL);
-	if (!this->mosq) {
+	this->mosquitto = mosquitto_new(NULL, clean_session, NULL);
+	if (!this->mosquitto) {
 		cout << "Error: Out of memory.\n";
 		return;
 	}
 
-	mosquitto_log_callback_set(this->mosq, MqttClient::logCallback);
-	mosquitto_connect_callback_set(this->mosq, MqttClient::connectCallback);
-	mosquitto_message_callback_set(this->mosq, MqttClient::messageCallback);
-	mosquitto_subscribe_callback_set(this->mosq, MqttClient::subscribeCallback);
+	mosquitto_connect_callback_set(this->mosquitto, MqttClient::connectCallback);
+	mosquitto_message_callback_set(this->mosquitto, MqttClient::messageCallback);
 
-	if (mosquitto_connect(this->mosq, host, port, keepalive)) {
+	if (mosquitto_connect(this->mosquitto, host, port, keepalive)) {
 		cout << "Unable to connect to MQTT server.\n";
-		return ;
+		return;
 	}
 
-    mosquitto_loop_forever(this->mosq, -1, 1);
+    mosquitto_loop_forever(this->mosquitto, -1, 1);
 }
 
 void MqttClient::disconnect() {
     cout << "Disconnecting MQTT Client...\n";
 
-	mosquitto_destroy(this->mosq);
+	mosquitto_destroy(this->mosquitto);
 	mosquitto_lib_cleanup();
 }
 
-void MqttClient::messageCallback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message) {
-	if(message->payloadlen){
-		printf("%s %s\n", message->topic, message->payload);
-	}else{
-		printf("%s (null)\n", message->topic);
+void MqttClient::messageCallback(struct mosquitto *mosquitto, void *userdata, const struct mosquitto_message *message) {
+	if (message->payloadlen) {
+		cout << "Received message on topic '" << message->topic << "': " << (char *)message->payload << "\n";
 	}
 	fflush(stdout);
 }
 
-void MqttClient::connectCallback(struct mosquitto *mosq, void *userdata, int result) {
-	if(!result){
-		// TODO
-		mosquitto_subscribe(mosq, NULL, "test-ip/#", 2);
-	}else{
-		fprintf(stderr, "Connect failed\n");
+void MqttClient::connectCallback(struct mosquitto *mosquitto, void *userdata, int error) {
+	if (error) {
+		cout << "MQTT connection failed\n";
+		return;
 	}
-}
 
-void MqttClient::subscribeCallback(struct mosquitto *mosq, void *userdata, int mid, int qos_count, const int *granted_qos) {
-	printf("Subscribed (mid: %d): %d", mid, granted_qos[0]);
-	for(int i=1; i<qos_count; i++){
-		printf(", %d", granted_qos[i]);
-	}
-	printf("\n");
-}
+	cout << "MQTT connection succeded\n";
 
-void MqttClient::logCallback(struct mosquitto *mosq, void *userdata, int level, const char *str) {
-	/* Pring all log messages regardless of level. */
-	printf("%s\n", str);
+	mosquitto_subscribe(mosquitto, NULL, "test-ip/#", 2);
 }

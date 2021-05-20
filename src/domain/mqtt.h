@@ -18,7 +18,7 @@ public:
     void disconnect();
 
 private:
-	struct mosquitto *mosq = NULL;
+	struct mosquitto *mosquitto = NULL;
 
     MqttClient();
 
@@ -31,10 +31,6 @@ private:
     static void messageCallback(struct mosquitto *mosquitto, void *userdata, const struct mosquitto_message *message);
 
 	static void connectCallback(struct mosquitto *mosquitto, void *userdata, int result);
-
- 	static void subscribeCallback(struct mosquitto *mosquitto, void *userdata, int mid, int qos_count, const int *granted_qos);
-
- 	static void logCallback(struct mosquitto *mosquitto, void *userdata, int level, const char *str);
 
 private:
     static MqttClient *m_MqttClient;
