@@ -2,8 +2,8 @@
 #include "utils/JSONUtils.h"
 #include "utils/Constants.h"
 #include "entities/example/Example.h"
-#include "entities/groundSensor/groundSensor.h"
-#include "entities/groundSensor/groundNutrient.h"
+#include "entities/groundSensor/GroundSensor.h"
+#include "entities/groundSensor/GroundNutrient.h"
 #include "libs/json.hpp"
 
 using nlohmann::json;
@@ -55,7 +55,6 @@ void Server::testSaveJson(const Rest::Request &request, Http::ResponseWriter res
 
 void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter response) {
 
-    groundSensor groundData = groundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
-    cout<<groundData.getNutrient().getValue();
-    response.send(Pistache::Http::Code::Ok, "Success");
+    GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
+    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient().getValue()));
 }

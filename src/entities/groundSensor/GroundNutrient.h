@@ -1,12 +1,14 @@
 #ifndef SMART_FLOWER_POT_GROUNDNUTRIENT_H
 #define SMART_FLOWER_POT_GROUNDNUTRIENT_H
+
 #include <iostream>
 #include <string>
 #include "../../libs/json.hpp"
 
 using nlohmann::json;
 using namespace std;
-class groundNutrient {
+
+class GroundNutrient {
 
 private:
     std::string type;
@@ -18,23 +20,21 @@ private:
     double value;
 
 public:
-    groundNutrient(nlohmann::json groundData) {
-        cout<<"ok1";
+    GroundNutrient(nlohmann::json groundData) {
         type = (std::string) groundData["type"];
-        minValue = std::stod(groundData["minValue"].get<nlohmann::json::string_t>());
-        maxValue = std::stod(groundData["maxValue"].get<nlohmann::json::string_t>());
-        value = std::stod(groundData["value"].get<nlohmann::json::string_t>());
-        cout<<"ok2";
+        minValue = groundData["minValue"].get<nlohmann::json::number_float_t>();
+        maxValue = groundData["maxValue"].get<nlohmann::json::number_float_t>();
+        value = groundData["value"].get<nlohmann::json::number_float_t>();
     }
 
-    groundNutrient() {}
+    GroundNutrient() {}
 
     const std::string &getType() const {
         return type;
     }
 
     void setType(const std::string &type) {
-        groundNutrient::type = type;
+        GroundNutrient::type = type;
     }
 
 
@@ -43,7 +43,7 @@ public:
     }
 
     void setMinValue(double minValue) {
-        groundNutrient::minValue = minValue;
+        GroundNutrient::minValue = minValue;
     }
 
     double getMaxValue() const {
@@ -51,7 +51,7 @@ public:
     }
 
     void setMaxValue(double maxValue) {
-        groundNutrient::maxValue = maxValue;
+        GroundNutrient::maxValue = maxValue;
     }
 
     double getValue() const {
@@ -59,12 +59,15 @@ public:
     }
 
     void setValue(double value) {
-        groundNutrient::value = value;
+        GroundNutrient::value = value;
     }
 
-    nlohmann::json to_json(){
+    nlohmann::json to_json() {
         nlohmann::json j;
-        j = json{{"type", this->type}, {"minValue", this->minValue}, {"maxValue", this->maxValue}, {"value", this->value}};
+        j = json{{"type",     this->type},
+                 {"minValue", this->minValue},
+                 {"maxValue", this->maxValue},
+                 {"value",    this->value}};
         return j;
     }
 };

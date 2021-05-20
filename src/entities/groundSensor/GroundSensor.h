@@ -5,38 +5,39 @@
 #include <string>
 #include <iostream>
 #include "../../libs/json.hpp"
-#include "groundNutrient.h"
+#include "GroundNutrient.h"
 
 using nlohmann::json;
 using namespace std;
-enum class SensorType {humidity, temperature, light, feritlizers};
+enum class SensorType {
+    humidity, temperature, light, feritlizers
+};
 
-class groundSensor {
+class GroundSensor {
 
 private:
 
     std::string updatedAt;
 
-    groundNutrient nutrient;
+    GroundNutrient nutrient;
 
     SensorType sensorType;
 
 public:
 
-    groundSensor(nlohmann::json groundData) {
+    GroundSensor(nlohmann::json groundData) {
         updatedAt = groundData["updatedAt"].get<nlohmann::json::string_t>();
-        cout<<"ok3";
         sensorType = groundData["sensorType"].get<SensorType>();
-        nutrient = groundNutrient(groundData["groundNutrient"]);
+        nutrient = GroundNutrient(groundData["groundNutrient"]);
 
     }
 
-    const groundNutrient &getNutrient() const {
+    const GroundNutrient &getNutrient() const {
         return nutrient;
     }
 
-    void setNutrient(const groundNutrient &nutrient) {
-        groundSensor::nutrient = nutrient;
+    void setNutrient(const GroundNutrient &nutrient) {
+        GroundSensor::nutrient = nutrient;
     }
 
     SensorType getSensorType() const {
@@ -44,7 +45,7 @@ public:
     }
 
     void setSensorType(SensorType sensorType) {
-        groundSensor::sensorType = sensorType;
+        GroundSensor::sensorType = sensorType;
     }
 
     string &getUpdatedAt() {
@@ -52,13 +53,15 @@ public:
     }
 
     void setUpdatedAt(const string &updatedAt) {
-        groundSensor::updatedAt = updatedAt;
+        GroundSensor::updatedAt = updatedAt;
     }
 
 
-    nlohmann::json to_json(){
+    nlohmann::json to_json() {
         nlohmann::json j;
-        j = json{{"updatedAt", this->updatedAt}, {"sensorType", this->sensorType}, {"groundNutrient", this->nutrient.to_json()}};
+        j = json{{"updatedAt",      this->updatedAt},
+                 {"sensorType",     this->sensorType},
+                 {"GroundNutrient", this->nutrient.to_json()}};
         return j;
     }
 };
