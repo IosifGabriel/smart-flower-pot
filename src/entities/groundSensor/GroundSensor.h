@@ -19,26 +19,28 @@ private:
 
     std::string updatedAt;
 
-    GroundNutrient nutrient;
+    GroundNutrient nutrient[100];
 
     SensorType sensorType;
+
 
 public:
 
     GroundSensor(nlohmann::json groundData) {
         updatedAt = groundData["updatedAt"].get<nlohmann::json::string_t>();
         sensorType = groundData["sensorType"].get<SensorType>();
-        nutrient = GroundNutrient(groundData["groundNutrient"]);
-
+        for(int i=0; i<=1; i++) {
+            nutrient[i] = GroundNutrient(groundData["groundNutrient"][i]);
+        }
     }
 
-    const GroundNutrient &getNutrient() const {
-        return nutrient;
+    const GroundNutrient &getNutrient(int i) const {
+        return nutrient[i];
     }
 
-    void setNutrient(const GroundNutrient &nutrient) {
-        GroundSensor::nutrient = nutrient;
-    }
+    //void setNutrient(const GroundNutrient &nutrient) {
+      //  GroundSensor::nutrient= nutrient;
+    //}
 
     SensorType getSensorType() const {
         return sensorType;
@@ -61,7 +63,7 @@ public:
         nlohmann::json j;
         j = json{{"updatedAt",      this->updatedAt},
                  {"sensorType",     this->sensorType},
-                 {"GroundNutrient", this->nutrient.to_json()}};
+                 {"GroundNutrient", this->nutrient[1].to_json()}};
         return j;
     }
 };

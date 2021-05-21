@@ -20,6 +20,6 @@ public:
 const std::string Constants::EXAMPLE_JSON_FILE_PATH = "/resources/example.json";
 const std::string Constants::EXAMPLE_JSON_SAVE_FILE_PATH = "/resources/exampleSave.json";
 const std::string Constants::GROUND_SENSOR_PATH = "/resources/groundSensor.json";
-const std::string Constants::PROJECT_SRC_ROOT = "/mnt/c/Users/alex0/CLionProjects/smart-flower-pot/src/";
+const std::string Constants::PROJECT_SRC_ROOT = "/mnt/c/Users/Aly/CLionProjects/smart-flower-pot/src/";
 
 #endif //SMART_FLOWER_POT_CONSTANTS_H
