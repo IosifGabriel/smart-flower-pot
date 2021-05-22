@@ -59,7 +59,9 @@ void Server::testSaveJson(const Rest::Request &request, Http::ResponseWriter res
 void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter response) {
 
     GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
-    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient().getValue()));
+    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(0).getValue()));
+
+
 }
 
 void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter response) {
