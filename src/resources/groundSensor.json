@@ -1,0 +1,15 @@
+{
+  "updatedAt": "04-05-2021",
+  "sensorType": 1,
+  "groundNutrient": [{
+    "type": "ingrasamant",
+    "minValue": 1.00,
+    "maxValue": 9.99,
+    "value": 5.5
+  },
+    {"type": "fertilizator",
+    "minValue": 2.00,
+    "maxValue": 5.99,
+    "value": 2.9}
+  ]
+}

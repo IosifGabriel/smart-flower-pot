@@ -2,6 +2,8 @@
 #include "utils/JSONUtils.h"
 #include "utils/Constants.h"
 #include "entities/example/Example.h"
+#include "entities/groundSensor/GroundSensor.h"
+#include "entities/groundSensor/GroundNutrient.h"
 #include "libs/json.hpp"
 
 using nlohmann::json;
@@ -27,6 +29,8 @@ void Server::setupRoutes() {
     Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
     Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
     Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
+    Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
+
 }
 
 void Server::hello(const Rest::Request &request, Http::ResponseWriter response) {
@@ -46,4 +50,13 @@ void Server::testSaveJson(const Rest::Request &request, Http::ResponseWriter res
 	JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_SAVE_FILE_PATH, example.to_json().dump(4));
 	
 	response.send(Pistache::Http::Code::Ok, "Check project source folder");
+}
+
+
+void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter response) {
+
+    GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
+    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(0).getValue()));
+
+
 }
