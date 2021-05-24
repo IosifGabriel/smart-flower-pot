@@ -7,7 +7,7 @@
 using namespace std;
 using nlohmann::json;
 
-enum class SensorType {humidity, temperature, light, feritlizers};
+enum class SensorTypeS {humidity, temperature, light, feritlizers};
 
 class SensorData {
 
@@ -21,7 +21,7 @@ private:
 
     double value;
 
-    SensorType sensorType;
+    SensorTypeS sensorType;
 
 
 public:
@@ -29,7 +29,7 @@ public:
         updatedAt = sensorData["updatedAt"].get<nlohmann::json::string_t>();
         minValue = sensorData["minValue"].get<double>();
         maxValue = sensorData["maxValue"].get<double>();
-        sensorType = sensorData["sensorType"].get<SensorType>();
+        sensorType = sensorData["sensorType"].get<SensorTypeS>();
         value = sensorData["value"].get<double>();
     }
 
@@ -51,11 +51,11 @@ public:
         SensorData::maxValue = maxValue;
     }
 
-    SensorType getSensorType() const {
+    SensorTypeS getSensorType() const {
         return sensorType;
     }
 
-    void setSensorType(SensorType sensorType) {
+    void setSensorType(SensorTypeS sensorType) {
         SensorData::sensorType = sensorType;
     }
 

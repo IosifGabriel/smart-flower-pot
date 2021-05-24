@@ -9,6 +9,8 @@
 #include <fstream>
 #include "../libs/json.hpp"
 #include <iostream>
+#include "../entities/sensor/SensorData.h"
+#include "../entities/groundSensor/GroundSensor.h"
 
 class JSONUtils {
 
@@ -27,6 +29,37 @@ public:
 	std::ofstream ofs(fileName);
 	ofs << jsonDump << std::endl;
     }
+
+    static bool checkJsonFilesMinMax(const std::string& fileName,double value,std::string groundNutrientType){
+        if(groundNutrientType.empty()) {
+            SensorData sensor = SensorData(JSONUtils::readJsonFromFile(fileName));
+            double minValue = sensor.getMinValue();
+            double maxValue = sensor.getMaxValue();
+            if(value < minValue || value > maxValue)
+                return false;
+            return true;
+        }
+        else {
+            GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(fileName));
+            int i = 0;
+            GroundNutrient nutrient = groundData.getNutrient(i);
+            while(nutrient.getType().empty())
+            {
+                if(nutrient.getType() == groundNutrientType)
+                {
+                    double minValue = nutrient.getMinValue();
+                    double maxValue = nutrient.getMaxValue();
+                    if(value < minValue || value > maxValue)
+                        return false;
+                    return true;
+                }
+                i++;
+                nutrient = groundData.getNutrient(i);
+            }
+            return false;
+        }
+    }
+
 };
 
 
