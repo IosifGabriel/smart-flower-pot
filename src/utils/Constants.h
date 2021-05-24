@@ -16,6 +16,7 @@ public:
     inline static const std::string TEMPERATURE_SENSOR_PATH = "/resources/temperatureSensor.json";
     inline static const std::string LIGHT_SENSOR_PATH = "/resources/lightSensor.json";
     inline static const std::string FERTILIZER_SENSOR_PATH = "/resources/fertilizerSensor.json";
+    inline static const std::string PLANT_INFO_PATH = "/resources/plantInfo.json";
     inline static const std::string PROJECT_SRC_ROOT = "/home/gabriel/Projects/smart-flower-pot/src";
 };
 

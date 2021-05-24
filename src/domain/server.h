@@ -27,14 +27,24 @@ private:
     void hello(const Rest::Request &request, Http::ResponseWriter response);
 
     void testReadJson(const Rest::Request &request, Http::ResponseWriter response);
-
+    
     void testSaveJson(const Rest::Request &request, Http::ResponseWriter response);
 
     void groundSensorJson(const Rest::Request &request, Http::ResponseWriter response);
 
+    void addNutrient(const Rest::Request &request, Http::ResponseWriter response);
+
     void changeSettings(const Rest::Request &request, Http::ResponseWriter response);
-    
+
     void changeValue(const Rest::Request &request, Http::ResponseWriter response);
+
+    void removeNutrient(const Rest::Request &request, Http::ResponseWriter response);
+  
+    void getPlantInfo(const Rest::Request &request, Http::ResponseWriter response);
+
+    void updatePlantInfo(const Rest::Request &request, Http::ResponseWriter response);
+
+    void getStatus(const Rest::Request &request,Http::ResponseWriter response);
 };
 
 #endif //SMART_FLOWER_POT_SERVER_H

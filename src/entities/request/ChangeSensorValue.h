@@ -7,17 +7,22 @@
 
 #include <string>
 #include <stdlib.h>
+#include "../groundSensor/SensorType.h"
 
 class ChangeSensorValue {
 
 private:
     double value;
     SensorType sensorType;
+    std::string nutrientType;
 
 public:
     ChangeSensorValue(nlohmann::json reqBody) {
         sensorType = reqBody["sensorType"].get<SensorType>();
         value = reqBody["value"].get<nlohmann::json::number_float_t>();
+                if (!reqBody["nutrientType"].is_null()) {
+            nutrientType = (std::string) reqBody["nutrientType"];
+        }
     }
 
     double getValue() const {
@@ -34,6 +39,14 @@ public:
 
     void setSensorType(SensorType sensorType) {
         ChangeSensorValue::sensorType = sensorType;
+    }
+    
+    const std::string &getNutrientType() const {
+        return nutrientType;
+    }
+
+    void setNutrientType(const std::string &nutrientType) {
+        ChangeSensorValue::nutrientType = nutrientType;
     }
 };
 
