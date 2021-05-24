@@ -7,7 +7,7 @@
 
 
 enum class SensorType {
-    HUMIDITY, TEMPERATURE, LIGHT, FERTILIZER
+    GROUND = 1, HUMIDITY = 2, TEMPERATURE = 3, LIGHT = 4, FERTILIZER = 5
 };
 
 
