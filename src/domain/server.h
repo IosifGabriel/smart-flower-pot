@@ -38,6 +38,8 @@ private:
 
     void changeValue(const Rest::Request &request, Http::ResponseWriter response);
 
+    void removeNutrient(const Rest::Request &request, Http::ResponseWriter response);
+  
     void getPlantInfo(const Rest::Request &request, Http::ResponseWriter response);
 
     void updatePlantInfo(const Rest::Request &request, Http::ResponseWriter response);
