@@ -21,13 +21,14 @@ private:
 
     SensorType sensorType;
 
+    int nutrientCounter = 1;
 
 public:
 
     GroundSensor(nlohmann::json groundData) {
         updatedAt = groundData["updatedAt"].get<nlohmann::json::string_t>();
         sensorType = groundData["sensorType"].get<SensorType>();
-        for(int i=0; i<=1; i++) {
+        for(int i = 0; i <= nutrientCounter; i++) {
             nutrient[i] = GroundNutrient(groundData["groundNutrient"][i]);
         }
     }
@@ -35,11 +36,7 @@ public:
     const GroundNutrient &getNutrient(int i) const {
         return nutrient[i];
     }
-
-    //void setNutrient(const GroundNutrient &nutrient) {
-      //  GroundSensor::nutrient= nutrient;
-    //}
-
+    
     SensorType getSensorType() const {
         return sensorType;
     }
@@ -56,12 +53,21 @@ public:
         GroundSensor::updatedAt = updatedAt;
     }
 
+    void addNutrient(GroundNutrient nutrientToAdd) {
+        nutrient[nutrientCounter + 1] = nutrientToAdd;
+        nutrientCounter++;
+    }
 
     nlohmann::json to_json() {
         nlohmann::json j;
+        json nutrientObjects = json::array();
+        for (int i = 0; i <= nutrientCounter; i++)
+        {
+            nutrientObjects.push_back(nutrient[i].to_json());
+        }
         j = json{{"updatedAt",      this->updatedAt},
                  {"sensorType",     this->sensorType},
-                 {"GroundNutrient", this->nutrient[1].to_json()}};
+                 {"GroundNutrient", nutrientObjects}};
         return j;
     }
 };
