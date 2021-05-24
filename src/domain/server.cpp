@@ -38,6 +38,7 @@ void Server::setupRoutes() {
     Rest::Routes::Post(router, "/value", Rest::Routes::bind(&Server::changeValue, this));
     Rest::Routes::Put(router, "/plantInfo", Rest::Routes::bind(&Server::updatePlantInfo, this));
     Rest::Routes::Get(router, "/plantInfo", Rest::Routes::bind(&Server::getPlantInfo, this));
+    Rest::Routes::Post(router, "/addNutrient", Rest::Routes::bind(&Server::addNutrient, this));
 
 }
 
@@ -160,4 +161,13 @@ void Server::getPlantInfo(const Rest::Request &request, Http::ResponseWriter res
     PlantInfo plant = JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::PLANT_INFO_PATH);
 
     response.send(Pistache::Http::Code::Ok, plant.to_json().dump(4));
+}
+
+void Server::addNutrient(const Rest::Request &request, Http::ResponseWriter response) {
+    GroundNutrient nutrientToAdd = GroundNutrient(nlohmann::json::parse(request.body()));
+    GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
+
+    groundData.addNutrient(nutrientToAdd);
+    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH, groundData.to_json().dump(4));
+    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(2).getValue()));
 }
