@@ -4,10 +4,11 @@
 #include <iostream>
 #include <string>
 #include "../../libs/json.hpp"
+#include "../request/ChangeSensorSettings.h"
+#include "../request/ChangeSensorValue.h"
+
 using namespace std;
 using nlohmann::json;
-
-enum class SensorType {humidity, temperature, light, feritlizers};
 
 class SensorData {
 
@@ -79,6 +80,15 @@ public:
         nlohmann::json j;
         j = json{{"updatedAt", this->updatedAt}, {"minValue", this->minValue}, {"maxValue", this->maxValue}, {"sensorType", this->sensorType}, {"value", this->value}};
         return j;
+    }
+
+    void update(ChangeSensorSettings settings) {
+        this->maxValue = settings.getMaxValue();
+        this->minValue = settings.getMinValue();
+    }
+    
+    void update(ChangeSensorValue value)    {
+    	this->value = value.getValue();
     }
 };
 #endif //SMART_FLOWER_POT_SENSORDATA_H

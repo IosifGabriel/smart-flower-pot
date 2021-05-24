@@ -2,7 +2,11 @@
 #include "../utils/JSONUtils.h"
 #include "../utils/Constants.h"
 #include "../entities/example/Example.h"
+#include "../entities/groundSensor/GroundSensor.h"
+#include "../entities/groundSensor/GroundNutrient.h"
 #include "../libs/json.hpp"
+#include "../entities/request/ChangeSensorSettings.h"
+#include "../entities/sensor/SensorData.h"
 
 using nlohmann::json;
 
@@ -28,6 +32,10 @@ void Server::setupRoutes() {
     Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
     Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
     Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
+    Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
+    Rest::Routes::Post(router, "/settings", Rest::Routes::bind(&Server::changeSettings, this));
+    Rest::Routes::Post(router, "/value", Rest::Routes::bind(&Server::changeValue, this));
+
 }
 
 void Server::hello(const Rest::Request &request, Http::ResponseWriter response) {
@@ -46,4 +54,95 @@ void Server::testSaveJson(const Rest::Request &request, Http::ResponseWriter res
 	JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_SAVE_FILE_PATH, example.to_json().dump(4));
 
 	response.send(Pistache::Http::Code::Ok, "Check project source folder");
+}
+
+
+void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter response) {
+
+    GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
+    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(0).getValue()));
+
+
+}
+
+void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter response) {
+    ChangeSensorSettings req = ChangeSensorSettings(nlohmann::json::parse(request.body()));
+    std::string filePath;
+    switch (req.getSensorType()) {
+        case SensorType::HUMIDITY:
+            filePath = Constants::HUMIDITY_SENSOR_PATH;
+            break;
+        case SensorType::LIGHT:
+            filePath = Constants::LIGHT_SENSOR_PATH;
+            break;
+        case SensorType::TEMPERATURE:
+            filePath = Constants::TEMPERATURE_SENSOR_PATH;
+            break;
+        case SensorType::FERTILIZER:
+            filePath = Constants::FERTILIZER_SENSOR_PATH;
+            break;
+        default:
+            response.send(Pistache::Http::Code::Not_Acceptable, "The sensorType provided is not valid");
+            return;
+    }
+    SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+
+    if (sensor.getMaxValue() == req.getMaxValue() && sensor.getMinValue() == req.getMinValue()) {
+        response.send(Pistache::Http::Code::Not_Modified, "The same values are already set!");
+        return;
+    }
+
+    if (req.getMinValue() > req.getMaxValue()) {
+        response.send(Pistache::Http::Code::Not_Acceptable, "MinValue must be lower that maxValue!");
+        return;
+    }
+
+    sensor.update(req);
+    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
+
+    response.send(Pistache::Http::Code::Ok, "Success");
+}
+
+void Server::changeValue(const Rest::Request &request, Http::ResponseWriter response) {
+    ChangeSensorValue req = ChangeSensorValue(nlohmann::json::parse(request.body()));
+    
+    std::string filePath;
+    switch (req.getSensorType()) {
+        case SensorType::HUMIDITY:
+            filePath = Constants::HUMIDITY_SENSOR_PATH;
+            break;
+        case SensorType::LIGHT:
+            filePath = Constants::LIGHT_SENSOR_PATH;
+            break;
+        case SensorType::TEMPERATURE:
+            filePath = Constants::TEMPERATURE_SENSOR_PATH;
+            break;
+        case SensorType::FERTILIZER:
+            filePath = Constants::FERTILIZER_SENSOR_PATH;
+            break;
+        default:
+            response.send(Pistache::Http::Code::Not_Acceptable, "The sensorType provided is not valid");
+            return;
+    }
+    SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+
+    if (sensor.getValue() == req.getValue()) {
+        response.send(Pistache::Http::Code::Not_Modified, "The same values are already set!");
+        return;
+    }
+
+    if (req.getValue() < sensor.getMinValue()) {
+        response.send(Pistache::Http::Code::Not_Acceptable, "Value is lesser than the minimum value");
+        return;
+    }
+    
+        if (req.getValue() > sensor.getMaxValue()) {
+        response.send(Pistache::Http::Code::Not_Acceptable, "Value is great than the maxim value");
+        return;
+    }
+
+    sensor.update(req);
+    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
+
+    response.send(Pistache::Http::Code::Ok, "Success");
 }
