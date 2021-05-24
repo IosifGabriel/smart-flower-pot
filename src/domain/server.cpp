@@ -7,6 +7,7 @@
 #include "../libs/json.hpp"
 #include "../entities/request/ChangeSensorSettings.h"
 #include "../entities/sensor/SensorData.h"
+#include "../entities/plant/PlantInfo.h"
 
 using nlohmann::json;
 
@@ -35,8 +36,10 @@ void Server::setupRoutes() {
     Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
     Rest::Routes::Post(router, "/settings", Rest::Routes::bind(&Server::changeSettings, this));
     Rest::Routes::Post(router, "/value", Rest::Routes::bind(&Server::changeValue, this));
-    Rest::Routes::Post(router, "/addNutrient", Rest::Routes::bind(&Server::addNutrient, this));
     Rest::Routes::Post(router, "/removeNutrient/:nutrientName", Rest::Routes::bind(&Server::removeNutrient, this));
+    Rest::Routes::Put(router, "/plantInfo", Rest::Routes::bind(&Server::updatePlantInfo, this));
+    Rest::Routes::Get(router, "/plantInfo", Rest::Routes::bind(&Server::getPlantInfo, this));
+    Rest::Routes::Post(router, "/addNutrient", Rest::Routes::bind(&Server::addNutrient, this));
 
 }
 
@@ -63,8 +66,6 @@ void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter
 
     GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
     response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(0).getValue()));
-
-
 }
 
 void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter response) {
@@ -77,6 +78,9 @@ void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter r
 
     std::string filePath;
     switch (req.getSensorType()) {
+        case SensorType::GROUND:
+            filePath = Constants::GROUND_SENSOR_PATH;
+            break;
         case SensorType::HUMIDITY:
             filePath = Constants::HUMIDITY_SENSOR_PATH;
             break;
@@ -121,6 +125,9 @@ void Server::changeValue(const Rest::Request &request, Http::ResponseWriter resp
     
     std::string filePath;
     switch (req.getSensorType()) {
+    	case SensorType::GROUND:
+            filePath = Constants::GROUND_SENSOR_PATH;
+            break;
         case SensorType::HUMIDITY:
             filePath = Constants::HUMIDITY_SENSOR_PATH;
             break;
@@ -140,7 +147,7 @@ void Server::changeValue(const Rest::Request &request, Http::ResponseWriter resp
     SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
 
     if (sensor.getValue() == req.getValue()) {
-        response.send(Pistache::Http::Code::Not_Modified, "The same values are already set!");
+        response.send(Pistache::Http::Code::Not_Acceptable, "The same values are already set!");
         return;
     }
 
@@ -178,4 +185,17 @@ void Server::removeNutrient(const Rest::Request &request, Http::ResponseWriter r
 
     JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH, groundData.to_json().dump(4));
     response.send(Pistache::Http::Code::Ok, "Success");
+
+void Server::updatePlantInfo(const Rest::Request &request, Http::ResponseWriter response) {
+    PlantInfo req = PlantInfo(nlohmann::json::parse(request.body()));
+
+    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::PLANT_INFO_PATH, req.to_json().dump(4));
+
+    response.send(Pistache::Http::Code::Ok, "Success");
+}
+
+void Server::getPlantInfo(const Rest::Request &request, Http::ResponseWriter response) {
+    PlantInfo plant = JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::PLANT_INFO_PATH);
+
+    response.send(Pistache::Http::Code::Ok, plant.to_json().dump(4));
 }

@@ -6,6 +6,8 @@
 #define SMART_FLOWER_POT_CHANGESENSORSETTINGS_H
 
 #include <string>
+#include "../groundSensor/SensorType.h"
+
 
 class ChangeSensorSettings {
 

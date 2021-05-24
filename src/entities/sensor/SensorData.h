@@ -86,7 +86,7 @@ public:
         this->maxValue = settings.getMaxValue();
         this->minValue = settings.getMinValue();
     }
-    
+
     void update(ChangeSensorValue value)    {
     	this->value = value.getValue();
     }
