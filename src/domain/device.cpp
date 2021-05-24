@@ -1,5 +1,4 @@
 #include "device.h"
-#include "mqtt.h"
 
 Device *Device::m_Device = NULL;
 std::mutex Device::m_Mutex;
@@ -32,11 +31,19 @@ Device::~Device() {
 }
 
 void Device::loop() {
-    // read all values from sensors
-    // check if not in range
-    // send alarm
-    // mark alarm
-    // if in range reset alarm
+    SensorData sensorData;
 
-    MqttClient::getInstance()->publish("test-ip/out", "loop");
+    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::HUMIDITY_SENSOR_PATH));
+    cout << "HUMIDITY" << sensorData.getValue() << "\n";
+
+    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::LIGHT_SENSOR_PATH));
+    cout << "LIGHT" << sensorData.getValue() << "\n";
+
+    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::TEMPERATURE_SENSOR_PATH));
+    cout << "TEMPERATURE" << sensorData.getValue() << "\n";
+
+    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::FERTILIZER_SENSOR_PATH));
+    cout << "FERTILIZER" << sensorData.getValue() << "\n";
+
+    MqttClient::getInstance()->publish("smart-flower-pot/notification", "loop");
 }

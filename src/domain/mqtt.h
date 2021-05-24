@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <string.h>
 #include <mosquitto.h>
 
 using namespace std;
