@@ -6,12 +6,10 @@
 #include <iostream>
 #include "../../libs/json.hpp"
 #include "GroundNutrient.h"
+#include "SensorType.h"
 
 using nlohmann::json;
 using namespace std;
-enum class SensorType {
-    humidity, temperature, light, feritlizers
-};
 
 class GroundSensor {
 
