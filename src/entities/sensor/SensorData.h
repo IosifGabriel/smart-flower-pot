@@ -5,6 +5,7 @@
 #include <string>
 #include "../../libs/json.hpp"
 #include "../request/ChangeSensorSettings.h"
+#include "../request/ChangeSensorValue.h"
 
 using namespace std;
 using nlohmann::json;
@@ -84,6 +85,10 @@ public:
     void update(ChangeSensorSettings settings) {
         this->maxValue = settings.getMaxValue();
         this->minValue = settings.getMinValue();
+    }
+    
+    void update(ChangeSensorValue value)    {
+    	this->value = value.getValue();
     }
 };
 #endif //SMART_FLOWER_POT_SENSORDATA_H
