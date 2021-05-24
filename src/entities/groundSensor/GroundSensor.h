@@ -7,6 +7,7 @@
 #include "../../libs/json.hpp"
 #include "GroundNutrient.h"
 #include "SensorType.h"
+#include <vector>
 
 using nlohmann::json;
 using namespace std;
@@ -17,24 +18,24 @@ private:
 
     std::string updatedAt;
 
-    GroundNutrient nutrient[100];
+    vector<GroundNutrient> nutrients;
 
     SensorType sensorType;
 
-    int nutrientCounter = 1;
+
 
 public:
 
     GroundSensor(nlohmann::json groundData) {
         updatedAt = groundData["updatedAt"].get<nlohmann::json::string_t>();
         sensorType = groundData["sensorType"].get<SensorType>();
-        for(int i = 0; i <= nutrientCounter; i++) {
-            nutrient[i] = GroundNutrient(groundData["groundNutrient"][i]);
+        for (auto& elem : groundData["groundNutrient"]) {
+            nutrients.push_back(GroundNutrient(elem)) ;
         }
     }
 
     const GroundNutrient &getNutrient(int i) const {
-        return nutrient[i];
+        return nutrients[i];
     }
     
     SensorType getSensorType() const {
@@ -54,20 +55,26 @@ public:
     }
 
     void addNutrient(GroundNutrient nutrientToAdd) {
-        nutrient[nutrientCounter + 1] = nutrientToAdd;
-        nutrientCounter++;
-    }
+        nutrients.push_back(nutrientToAdd);
 
+    }
+//    void deleteNutrient(const string nutrientToDeleteType){
+//        for(int i =0; i<= nutrientCounter;i++)
+//            if(nutrient[i].getType() == nutrientToDeleteType)
+//            {
+//                cout<<"am intrat";
+//
+//            }}
     nlohmann::json to_json() {
         nlohmann::json j;
         json nutrientObjects = json::array();
-        for (int i = 0; i <= nutrientCounter; i++)
+        for (int i = 0; i <= this->nutrients.size(); i++)
         {
-            nutrientObjects.push_back(nutrient[i].to_json());
+            nutrientObjects.push_back(nutrients[i].to_json());
         }
         j = json{{"updatedAt",      this->updatedAt},
                  {"sensorType",     this->sensorType},
-                 {"GroundNutrient", nutrientObjects}};
+                 {"groundNutrient", nutrientObjects}};
         return j;
     }
 };
