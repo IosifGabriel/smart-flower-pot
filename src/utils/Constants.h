@@ -26,7 +26,6 @@ public:
 const std::string Constants::EXAMPLE_JSON_FILE_PATH = "/resources/example.json";
 const std::string Constants::EXAMPLE_JSON_SAVE_FILE_PATH = "/resources/exampleSave.json";
 const std::string Constants::GROUND_SENSOR_PATH = "/resources/groundSensor.json";
-const std::string Constants::PROJECT_SRC_ROOT = "/mnt/c/Users/Fane/Desktop/smart-flower-pot/src/";
 const std::string Constants::HUMIDITY_SENSOR_PATH = "/resources/humiditySensor.json";
 const std::string Constants::TEMPERATURE_SENSOR_PATH = "/resources/temperatureSensor.json";
 const std::string Constants::LIGHT_SENSOR_PATH = "/resources/lightSensor.json";
