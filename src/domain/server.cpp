@@ -69,6 +69,9 @@ void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter r
     ChangeSensorSettings req = ChangeSensorSettings(nlohmann::json::parse(request.body()));
     std::string filePath;
     switch (req.getSensorType()) {
+        case SensorType::GROUND:
+            filePath = Constants::GROUND_SENSOR_PATH;
+            break;
         case SensorType::HUMIDITY:
             filePath = Constants::HUMIDITY_SENSOR_PATH;
             break;
@@ -108,6 +111,9 @@ void Server::changeValue(const Rest::Request &request, Http::ResponseWriter resp
     
     std::string filePath;
     switch (req.getSensorType()) {
+    	case SensorType::GROUND:
+            filePath = Constants::GROUND_SENSOR_PATH;
+            break;
         case SensorType::HUMIDITY:
             filePath = Constants::HUMIDITY_SENSOR_PATH;
             break;
@@ -127,7 +133,7 @@ void Server::changeValue(const Rest::Request &request, Http::ResponseWriter resp
     SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
 
     if (sensor.getValue() == req.getValue()) {
-        response.send(Pistache::Http::Code::Not_Modified, "The same values are already set!");
+        response.send(Pistache::Http::Code::Not_Acceptable, "The same values are already set!");
         return;
     }
 
