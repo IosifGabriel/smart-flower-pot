@@ -7,6 +7,7 @@
 
 #include <string>
 #include <stdlib.h>
+#include "../groundSensor/SensorType.h"
 
 class ChangeSensorValue {
 
