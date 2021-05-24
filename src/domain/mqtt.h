@@ -17,6 +17,8 @@ public:
 
     void disconnect();
 
+    void publish(const char *topic, string payload);
+
 private:
 	struct mosquitto *mosquitto = NULL;
 

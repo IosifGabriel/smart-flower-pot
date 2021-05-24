@@ -1,4 +1,5 @@
 #include "device.h"
+#include "mqtt.h"
 
 Device *Device::m_Device = NULL;
 std::mutex Device::m_Mutex;
@@ -36,4 +37,6 @@ void Device::loop() {
     // send alarm
     // mark alarm
     // if in range reset alarm
+
+    MqttClient::getInstance()->publish("test-ip/out", "loop");
 }

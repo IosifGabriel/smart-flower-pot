@@ -76,5 +76,9 @@ void MqttClient::connectCallback(struct mosquitto *mosquitto, void *userdata, in
 
 	cout << "MQTT connection succeded\n";
 
-	mosquitto_subscribe(mosquitto, NULL, "test-ip/#", 2);
+	mosquitto_subscribe(mosquitto, NULL, "test-ip/in", 2);
+}
+
+void MqttClient::publish(const char *topic, string payload) {
+	mosquitto_publish(this->mosquitto, NULL, topic, payload.length(), payload.c_str(), 2, false);
 }
