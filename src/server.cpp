@@ -65,10 +65,9 @@ void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter
 
 void Server::addNutrient(const Rest::Request &request, Http::ResponseWriter response) {
     GroundNutrient nutrientToAdd = GroundNutrient(nlohmann::json::parse(request.body()));
-    std::string filePath;
     GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
 
     groundData.addNutrient(nutrientToAdd);
-
+    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH, groundData.to_json().dump(4));
     response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(2).getValue()));
 }
