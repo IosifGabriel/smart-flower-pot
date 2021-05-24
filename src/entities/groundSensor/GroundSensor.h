@@ -56,7 +56,25 @@ public:
 
     void addNutrient(GroundNutrient nutrientToAdd) {
         nutrients.push_back(nutrientToAdd);
+    }
 
+    void update(ChangeSensorSettings settings) {
+        for (GroundNutrient nutrient : nutrients) {
+            if (nutrient.getType() == settings.getNutrientType()) {
+                nutrient.setMaxValue(settings.getMaxValue());
+                nutrient.setMinValue(settings.getMinValue());
+            }
+        }
+    }
+
+    void removeNutrient(string nutrientName) {
+        vector<GroundNutrient>::iterator itToRemove;
+        for (auto it = nutrients.begin(); it != nutrients.end(); ++it) {
+            if ((*it).getType() == nutrientName)
+                itToRemove = it;
+        }
+
+        nutrients.erase(itToRemove);
     }
 //    void deleteNutrient(const string nutrientToDeleteType){
 //        for(int i =0; i<= nutrientCounter;i++)
@@ -68,9 +86,8 @@ public:
     nlohmann::json to_json() {
         nlohmann::json j;
         json nutrientObjects = json::array();
-        for (int i = 0; i <= this->nutrients.size(); i++)
-        {
-            nutrientObjects.push_back(nutrients[i].to_json());
+        for (GroundNutrient nutrient : nutrients) {
+            nutrientObjects.push_back(nutrient.to_json());
         }
         j = json{{"updatedAt",      this->updatedAt},
                  {"sensorType",     this->sensorType},
