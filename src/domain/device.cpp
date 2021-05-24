@@ -31,19 +31,22 @@ Device::~Device() {
 }
 
 void Device::loop() {
-    SensorData sensorData;
+    json notifications = json::array();
 
-    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::HUMIDITY_SENSOR_PATH));
-    cout << "HUMIDITY" << sensorData.getValue() << "\n";
+    if(!JSONUtils::checkJsonFilesMinMax(Constants::PROJECT_SRC_ROOT + Constants::HUMIDITY_SENSOR_PATH)) {
+        notifications.push_back("HUMIDITY not in parameters");
+    }
+    if(!JSONUtils::checkJsonFilesMinMax(Constants::PROJECT_SRC_ROOT + Constants::LIGHT_SENSOR_PATH)) {
+        notifications.push_back("LIGHT not in parameters");
+    }
+    if(!JSONUtils::checkJsonFilesMinMax(Constants::PROJECT_SRC_ROOT + Constants::TEMPERATURE_SENSOR_PATH)) {
+        notifications.push_back("TEMPERATURE not in parameters");
+    }
+    if(!JSONUtils::checkJsonFilesMinMax(Constants::PROJECT_SRC_ROOT + Constants::FERTILIZER_SENSOR_PATH)) {
+        notifications.push_back("FERTILIZER not in parameters");
+    }
 
-    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::LIGHT_SENSOR_PATH));
-    cout << "LIGHT" << sensorData.getValue() << "\n";
-
-    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::TEMPERATURE_SENSOR_PATH));
-    cout << "TEMPERATURE" << sensorData.getValue() << "\n";
-
-    sensorData = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::FERTILIZER_SENSOR_PATH));
-    cout << "FERTILIZER" << sensorData.getValue() << "\n";
-
-    MqttClient::getInstance()->publish("smart-flower-pot/notification", "loop");
+    if(!notifications.empty()) {
+        MqttClient::getInstance()->publish("smart-flower-pot/notification", notifications.dump(4));
+    }
 }

@@ -30,9 +30,9 @@ void Server::stop() {
 }
 
 void Server::setupRoutes() {
-    Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
-    Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
-    Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
+    // Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
+    // Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
+    // Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
     Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
     Rest::Routes::Post(router, "/settings", Rest::Routes::bind(&Server::changeSettings, this));
     Rest::Routes::Post(router, "/value", Rest::Routes::bind(&Server::changeValue, this));

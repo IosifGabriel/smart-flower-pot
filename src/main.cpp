@@ -34,7 +34,7 @@ void startDevice() {
     Device::getInstance()->isRunning = true;
     while (Device::getInstance()->isRunning) {
         Device::getInstance()->loop();
-        this_thread::sleep_for(chrono::milliseconds(1500));
+        this_thread::sleep_for(chrono::milliseconds(1000));
     }
 }
 

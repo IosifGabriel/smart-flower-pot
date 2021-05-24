@@ -65,8 +65,8 @@ void MqttClient::messageCallback(struct mosquitto *mosquitto, void *userdata, co
 	if (message->payloadlen) {
 		cout << "Received message on topic '" << message->topic << "': " << (char *)message->payload << "\n";
 
-		if (strcmp(message->topic, "test-ip/music") == 0) {
-			// TODO
+		if (strcmp(message->topic, "smart-flower-pot/music") == 0) {
+			cout << "Playing music: " << (char *)message->payload << "\n";
 		}
 	}
 
@@ -81,7 +81,7 @@ void MqttClient::connectCallback(struct mosquitto *mosquitto, void *userdata, in
 
 	cout << "MQTT connection succeded\n";
 
-	mosquitto_subscribe(mosquitto, NULL, "test-ip/music", 2);
+	mosquitto_subscribe(mosquitto, NULL, "smart-flower-pot/music", 2);
 }
 
 void MqttClient::publish(const char *topic, string payload) {
