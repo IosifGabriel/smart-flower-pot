@@ -7,6 +7,7 @@
 #include "../libs/json.hpp"
 #include "../entities/request/ChangeSensorSettings.h"
 #include "../entities/sensor/SensorData.h"
+#include "../entities/plant/PlantInfo.h"
 
 using nlohmann::json;
 
@@ -35,6 +36,8 @@ void Server::setupRoutes() {
     Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
     Rest::Routes::Post(router, "/settings", Rest::Routes::bind(&Server::changeSettings, this));
     Rest::Routes::Post(router, "/value", Rest::Routes::bind(&Server::changeValue, this));
+    Rest::Routes::Put(router, "/plantInfo", Rest::Routes::bind(&Server::updatePlantInfo, this));
+    Rest::Routes::Get(router, "/plantInfo", Rest::Routes::bind(&Server::getPlantInfo, this));
 
 }
 
@@ -61,8 +64,6 @@ void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter
 
     GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
     response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(0).getValue()));
-
-
 }
 
 void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter response) {
@@ -145,4 +146,18 @@ void Server::changeValue(const Rest::Request &request, Http::ResponseWriter resp
     JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
 
     response.send(Pistache::Http::Code::Ok, "Success");
+}
+
+void Server::updatePlantInfo(const Rest::Request &request, Http::ResponseWriter response) {
+    PlantInfo req = PlantInfo(nlohmann::json::parse(request.body()));
+
+    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::PLANT_INFO_PATH, req.to_json().dump(4));
+
+    response.send(Pistache::Http::Code::Ok, "Success");
+}
+
+void Server::getPlantInfo(const Rest::Request &request, Http::ResponseWriter response) {
+    PlantInfo plant = JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::PLANT_INFO_PATH);
+
+    response.send(Pistache::Http::Code::Ok, plant.to_json().dump(4));
 }

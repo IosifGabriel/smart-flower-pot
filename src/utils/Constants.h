@@ -18,6 +18,7 @@ public:
     static const std::string TEMPERATURE_SENSOR_PATH;
     static const std::string LIGHT_SENSOR_PATH;
     static const std::string FERTILIZER_SENSOR_PATH;
+    static const std::string PLANT_INFO_PATH;
     static const std::string SENSOR_PATH;
 
 };
@@ -30,6 +31,7 @@ const std::string Constants::HUMIDITY_SENSOR_PATH = "/resources/humiditySensor.j
 const std::string Constants::TEMPERATURE_SENSOR_PATH = "/resources/temperatureSensor.json";
 const std::string Constants::LIGHT_SENSOR_PATH = "/resources/lightSensor.json";
 const std::string Constants::FERTILIZER_SENSOR_PATH = "/resources/fertilizerSensor.json";
+const std::string Constants::PLANT_INFO_PATH = "/resources/plantInfo.json";
 const std::string Constants::PROJECT_SRC_ROOT = "/home/alexandru.jilavu/CLionProjects/smart-flower-pot/src";
 
 #endif //SMART_FLOWER_POT_CONSTANTS_H

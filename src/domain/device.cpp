@@ -38,5 +38,5 @@ void Device::loop() {
     // mark alarm
     // if in range reset alarm
 
-    MqttClient::getInstance()->publish("test-ip/out", "loop");
+//    MqttClient::getInstance()->publish("test-ip/out", "loop");
 }
