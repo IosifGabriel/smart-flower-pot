@@ -23,6 +23,7 @@ private:
 
     SensorType sensorType;
 
+    int nutrientCounter = 0;
 
 public:
 
@@ -31,6 +32,7 @@ public:
         sensorType = groundData["sensorType"].get<SensorType>();
         for(int i=0; i<=1; i++) {
             nutrient[i] = GroundNutrient(groundData["groundNutrient"][i]);
+            nutrientCounter = i;
         }
     }
 
@@ -58,7 +60,9 @@ public:
         GroundSensor::updatedAt = updatedAt;
     }
 
-
+    void addNutrient(GroundNutrient nutrientToAdd) {
+        nutrient[nutrientCounter + 1] = nutrientToAdd;
+    }
     nlohmann::json to_json() {
         nlohmann::json j;
         j = json{{"updatedAt",      this->updatedAt},

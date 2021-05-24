@@ -30,6 +30,7 @@ void Server::setupRoutes() {
     Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
     Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
     Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
+    Rest::Routes::Post(router, "/addNutrient", Rest::Routes::bind(&Server::addNutrient, this));
 
 }
 
@@ -59,4 +60,15 @@ void Server::groundSensorJson(const Rest::Request &request, Http::ResponseWriter
     response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(0).getValue()));
 
 
+}
+
+
+void Server::addNutrient(const Rest::Request &request, Http::ResponseWriter response) {
+    GroundNutrient nutrientToAdd = GroundNutrient(nlohmann::json::parse(request.body()));
+    std::string filePath;
+    GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
+
+    groundData.addNutrient(nutrientToAdd);
+
+    response.send(Pistache::Http::Code::Ok, std::to_string(groundData.getNutrient(2).getValue()));
 }
