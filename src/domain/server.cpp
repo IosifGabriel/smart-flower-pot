@@ -1,12 +1,12 @@
 #include "server.h"
-#include "utils/JSONUtils.h"
-#include "utils/Constants.h"
-#include "entities/example/Example.h"
-#include "entities/groundSensor/GroundSensor.h"
-#include "entities/groundSensor/GroundNutrient.h"
-#include "libs/json.hpp"
-#include "entities/request/ChangeSensorSettings.h"
-#include "entities/sensor/SensorData.h"
+#include "../utils/JSONUtils.h"
+#include "../utils/Constants.h"
+#include "../entities/example/Example.h"
+#include "../entities/groundSensor/GroundSensor.h"
+#include "../entities/groundSensor/GroundNutrient.h"
+#include "../libs/json.hpp"
+#include "../entities/request/ChangeSensorSettings.h"
+#include "../entities/sensor/SensorData.h"
 
 using nlohmann::json;
 
@@ -24,6 +24,7 @@ void Server::start() {
 }
 
 void Server::stop() {
+    cout << "Shutdown Server\n";
     httpEndpoint->shutdown();
 }
 
@@ -42,7 +43,6 @@ void Server::hello(const Rest::Request &request, Http::ResponseWriter response) 
 }
 
 void Server::testReadJson(const Rest::Request &request, Http::ResponseWriter response) {
-
     Example example = Example(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_FILE_PATH));
 
     response.send(Pistache::Http::Code::Ok, example.getPersonalData().getLastName());
@@ -50,9 +50,9 @@ void Server::testReadJson(const Rest::Request &request, Http::ResponseWriter res
 
 void Server::testSaveJson(const Rest::Request &request, Http::ResponseWriter response) {
 	Example example = Example(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_FILE_PATH));	
-	
+
 	JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::EXAMPLE_JSON_SAVE_FILE_PATH, example.to_json().dump(4));
-	
+
 	response.send(Pistache::Http::Code::Ok, "Check project source folder");
 }
 

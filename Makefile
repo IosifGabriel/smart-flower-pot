@@ -1,2 +1,2 @@
 smart_flower_pot: src/main.cpp
-	g++ $< -o build/$@ src/server.cpp src/device.cpp src/entities/example/Example.cpp src/entities/example/Example.h src/entities/example/PersonalDataExample.h src/entities/example/SensorDataExample.h src/utils/JSONUtils.h src/utils/Constants.h -lpistache -lcrypto -lssl -lpthread
+	g++ $< -o build/$@ src/domain/server.cpp src/domain/device.cpp src/domain/mqtt.cpp src/entities/example/Example.cpp src/entities/example/Example.h src/entities/example/PersonalDataExample.h src/entities/example/SensorDataExample.h src/utils/JSONUtils.h src/utils/Constants.h -lpistache -lcrypto -lssl -lpthread -lmosquitto -std=c++17
