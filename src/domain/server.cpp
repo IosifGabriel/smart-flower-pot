@@ -30,17 +30,17 @@ void Server::stop() {
 }
 
 void Server::setupRoutes() {
-    Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
-    Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
-    Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
-    Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
+    // Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&Server::hello, this));
+    // Rest::Routes::Get(router, "/testReadJson", Rest::Routes::bind(&Server::testReadJson, this));
+    // Rest::Routes::Get(router, "/testSaveJson", Rest::Routes::bind(&Server::testSaveJson, this));
+    // Rest::Routes::Get(router, "/groundSensor", Rest::Routes::bind(&Server::groundSensorJson, this));
     Rest::Routes::Post(router, "/settings", Rest::Routes::bind(&Server::changeSettings, this));
     Rest::Routes::Post(router, "/value", Rest::Routes::bind(&Server::changeValue, this));
-    Rest::Routes::Post(router, "/removeNutrient/:nutrientName", Rest::Routes::bind(&Server::removeNutrient, this));
     Rest::Routes::Put(router, "/plantInfo", Rest::Routes::bind(&Server::updatePlantInfo, this));
     Rest::Routes::Get(router, "/plantInfo", Rest::Routes::bind(&Server::getPlantInfo, this));
     Rest::Routes::Post(router, "/addNutrient", Rest::Routes::bind(&Server::addNutrient, this));
-    Rest::Routes::Get(router, "/getStatus/:settingName", Rest::Routes::bind(&Server::getStatus, this));
+    Rest::Routes::Post(router, "/removeNutrient/:nutrientName", Rest::Routes::bind(&Server::removeNutrient, this));
+    Rest::Routes::Get(router, "/getStatus/:sensorType", Rest::Routes::bind(&Server::getStatus, this));
 
 }
 
@@ -83,9 +83,6 @@ void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter r
 
     std::string filePath;
     switch (req.getSensorType()) {
-        case SensorType::GROUND:
-            filePath = Constants::GROUND_SENSOR_PATH;
-            break;
         case SensorType::HUMIDITY:
             filePath = Constants::HUMIDITY_SENSOR_PATH;
             break;
@@ -108,19 +105,17 @@ void Server::changeSettings(const Rest::Request &request, Http::ResponseWriter r
 
     if (req.getSensorType() != SensorType::GROUND) {
         SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
-
         if (sensor.getMaxValue() == req.getMaxValue() && sensor.getMinValue() == req.getMinValue()) {
             response.send(Pistache::Http::Code::Not_Modified, "The same values are already set!");
             return;
         }
-
         sensor.update(req);
+        JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
     } else {
         GroundSensor sensor = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
         sensor.update(req);
+        JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
     }
-
-    JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
 
     response.send(Pistache::Http::Code::Ok, "Success");
 }
@@ -190,6 +185,7 @@ void Server::removeNutrient(const Rest::Request &request, Http::ResponseWriter r
 
     JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH, groundData.to_json().dump(4));
     response.send(Pistache::Http::Code::Ok, "Success");
+}
 
 void Server::updatePlantInfo(const Rest::Request &request, Http::ResponseWriter response) {
     PlantInfo req = PlantInfo(nlohmann::json::parse(request.body()));
@@ -206,32 +202,23 @@ void Server::getPlantInfo(const Rest::Request &request, Http::ResponseWriter res
 }
 
 void Server::getStatus(const Rest::Request &request, Http::ResponseWriter response) {
-    auto param = request.param(":settingName").as<std::string>();
-    SensorData sensor;
-
-    std::string filePath;
-
+    auto param = request.param(":sensorType").as<std::string>();
     if (param == "humidity") {
-        filePath = Constants::HUMIDITY_SENSOR_PATH;
-        sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+        SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::HUMIDITY_SENSOR_PATH));
         response.send(Pistache::Http::Code::Ok, sensor.to_json().dump(4));
     } else if (param == "light") {
-        filePath = Constants::LIGHT_SENSOR_PATH;
-        sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+        SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::LIGHT_SENSOR_PATH));
         response.send(Pistache::Http::Code::Ok, sensor.to_json().dump(4));
     } else if (param == "temperature") {
-        filePath = Constants::TEMPERATURE_SENSOR_PATH;
-        sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+        SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::TEMPERATURE_SENSOR_PATH));
         response.send(Pistache::Http::Code::Ok, sensor.to_json().dump(4));
     } else if (param == "fertilizer") {
-        filePath = Constants::FERTILIZER_SENSOR_PATH;
-        sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+        SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::FERTILIZER_SENSOR_PATH));
         response.send(Pistache::Http::Code::Ok, sensor.to_json().dump(4));
     } else if (param == "ground") {
-        filePath = Constants::GROUND_SENSOR_PATH;
-        GroundSensor sensor1 = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+        GroundSensor sensor1 = GroundSensor(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + Constants::GROUND_SENSOR_PATH));
         response.send(Pistache::Http::Code::Ok, sensor1.to_json().dump(4));
-    } else
+    } else {
         response.send(Pistache::Http::Code::Not_Acceptable, "The sensorType provided is not valid");
-
+    }
 }

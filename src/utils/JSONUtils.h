@@ -37,36 +37,36 @@ public:
         ofs << jsonDump << std::endl;
     }
 
-    static bool checkJsonFilesMinMax(const std::string& fileName,double value,std::string groundNutrientType){
-        if(groundNutrientType.empty()) {
-            SensorData sensor = SensorData(JSONUtils::readJsonFromFile(fileName));
-            double minValue = sensor.getMinValue();
-            double maxValue = sensor.getMaxValue();
-            if(value < minValue || value > maxValue)
-                return false;
-            return true;
-        }
-        else {
-            GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(fileName));
-            int i = 0;
-            GroundNutrient nutrient = groundData.getNutrient(i);
-            while(nutrient.getType().empty())
-            {
-                if(nutrient.getType() == groundNutrientType)
-                {
-                    double minValue = nutrient.getMinValue();
-                    double maxValue = nutrient.getMaxValue();
-                    if(value < minValue || value > maxValue)
-                        return false;
-                    return true;
-                }
-                i++;
-                nutrient = groundData.getNutrient(i);
-            }
+    static bool checkJsonFilesMinMax(const std::string& fileName) {
+        SensorData sensor = SensorData(JSONUtils::readJsonFromFile(fileName));
+        double value = sensor.getValue();
+        double minValue = sensor.getMinValue();
+        double maxValue = sensor.getMaxValue();
+        if(value < minValue || value > maxValue)
             return false;
-        }
+        return true;
     }
 
+    static bool checkJsonFilesMinMax(const std::string& fileName, std::string groundNutrientType) {
+        GroundSensor groundData = GroundSensor(JSONUtils::readJsonFromFile(fileName));
+        int i = 0;
+        GroundNutrient nutrient = groundData.getNutrient(i);
+        while(nutrient.getType().empty())
+        {
+            if(nutrient.getType() == groundNutrientType)
+            {
+                double value = nutrient.getValue();
+                double minValue = nutrient.getMinValue();
+                double maxValue = nutrient.getMaxValue();
+                if(value < minValue || value > maxValue)
+                    return false;
+                return true;
+            }
+            i++;
+            nutrient = groundData.getNutrient(i);
+        }
+        return false;
+    }
 
     static std::string getCurrentDate() {
         system_clock::time_point tp = system_clock::now();

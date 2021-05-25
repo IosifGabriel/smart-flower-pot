@@ -3,6 +3,13 @@
 
 #include <iostream>
 #include <mutex>
+#include "mqtt.h"
+#include "../utils/JSONUtils.h"
+#include "../utils/Constants.h"
+#include "../entities/groundSensor/GroundSensor.h"
+#include "../entities/groundSensor/GroundNutrient.h"
+#include "../entities/sensor/SensorData.h"
+#include "../libs/json.hpp"
 
 using namespace std;
 

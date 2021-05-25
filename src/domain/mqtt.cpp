@@ -64,7 +64,47 @@ void MqttClient::disconnect() {
 void MqttClient::messageCallback(struct mosquitto *mosquitto, void *userdata, const struct mosquitto_message *message) {
 	if (message->payloadlen) {
 		cout << "Received message on topic '" << message->topic << "': " << (char *)message->payload << "\n";
+
+		if (strcmp(message->topic, "smart-flower-pot/music") == 0) {
+			cout << "Playing music: " << (char *)message->payload << "\n";
+		}
+		else if (strcmp(message->topic, "smart-flower-pot/update") == 0) {
+			auto rawCommand = json::parse((char *)message->payload);
+
+			SensorType sensorType = rawCommand["sensorType"].get<SensorType>();
+			double sensorValue = rawCommand["value"].get<double>();
+
+			std::string filePath;
+			switch (sensorType) {
+				case SensorType::HUMIDITY:
+					filePath = Constants::HUMIDITY_SENSOR_PATH;
+					break;
+				case SensorType::LIGHT:
+					filePath = Constants::LIGHT_SENSOR_PATH;
+					break;
+				case SensorType::TEMPERATURE:
+					filePath = Constants::TEMPERATURE_SENSOR_PATH;
+					break;
+				case SensorType::FERTILIZER:
+					filePath = Constants::FERTILIZER_SENSOR_PATH;
+					break;
+				case SensorType::GROUND:
+					filePath = Constants::GROUND_SENSOR_PATH;
+					break;
+				default:
+					return;
+			}
+
+			if (sensorType != SensorType::GROUND) {
+				SensorData sensor = SensorData(JSONUtils::readJsonFromFile(Constants::PROJECT_SRC_ROOT + filePath));
+				sensor.update(sensorValue);
+				JSONUtils::writeJsonToFile(Constants::PROJECT_SRC_ROOT + filePath, sensor.to_json().dump(4));
+			} else {
+				// TODO
+			}
+		}
 	}
+
 	fflush(stdout);
 }
 
@@ -76,7 +116,8 @@ void MqttClient::connectCallback(struct mosquitto *mosquitto, void *userdata, in
 
 	cout << "MQTT connection succeded\n";
 
-	mosquitto_subscribe(mosquitto, NULL, "test-ip/in", 2);
+	mosquitto_subscribe(mosquitto, NULL, "smart-flower-pot/music", 2);
+	mosquitto_subscribe(mosquitto, NULL, "smart-flower-pot/update", 2);
 }
 
 void MqttClient::publish(const char *topic, string payload) {

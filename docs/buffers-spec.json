@@ -1,0 +1,132 @@
+{
+    "device-name": "Smart Flower Pot",
+    "device-type": "Flower Pot",
+    "buffers-count": 1,
+    "input-buffers":{
+        "1":{
+            "token-delimitators": "",
+            "protocol": "HTTP",
+            "prefix": "curl -XPOST 'http://127.0.0.1:9080/'",
+            "buffer-tokens": [
+                {
+                    "name":"Option",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [settings]
+                    "optional": false
+                },
+                {
+                    "name":"Parameter",
+                    "description": "",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [ingrasamant]
+                    "optional": true
+                },
+                {
+                    "name":"Body value",
+                    "description": "",
+                    "token-type":"string",
+                    "byte-size":256,
+                    "regex-rule": "--data '^[a-z0-9]+(\\.[_a-z0-9]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,15})$\"}‌​'", // Correct inputs will be: --data '{"sensorType":1,"value":6.35,   "groundNutrient": [{"type": "test" }]}'
+                    "optional": false
+                }
+            ]
+        },
+        "2":{
+            "token-delimitators": "",
+            "protocol": "HTTP",
+            "prefix": "curl -XPUT 'http://127.0.0.1:9080/'",
+            "buffer-tokens": [
+                {
+                    "name":"Option",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [plantInfo]
+                    "optional": false
+                },
+                {
+                    "name":"Body value",
+                    "description": "",
+                    "token-type":"string",
+                    "byte-size":256,
+                    "regex-rule": "--data '^[a-z0-9]+(\\.[_a-z0-9]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,15})$\"}‌​'", // Correct inputs will be: --data '{"sensorType":1,"value":6.35,   "groundNutrient": [{"type": "test" }]}'
+                    "optional": false
+                }
+            ]
+        },
+        "3": {
+            "token-delimitators": " ",
+            "protocol": "MQTT",
+            "prefix": "mosquitto_sub -h test.mosquitto.org -p 1885 -t smart-flower-pot/",
+            "buffer-tokens":[
+                {
+                    "name":"Option",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [music]
+                    "optional": false
+                },
+                {
+                    "name":"Data",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":256,
+                    "regex-rule": "-m '[a-zA-Z]*'", // Correct inputs will be: [groundSensor, settings]
+                    "optional": false
+                }
+            ]
+        }
+    },
+    "output-buffers":{
+        "1":{
+            "token-delimitators": "",
+            "protocol": "HTTP",
+            "prefix": "curl -XGET 'http://127.0.0.1:9080/'",
+            "buffer-tokens":[
+                {
+                    "name":"Options",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [groundSensor, settings]
+                    "optional": false
+                },
+                {
+                    "name":"parameter",
+                    "description": "Parameters for the setting chosen",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [settingName]
+                    "optional": true
+                }
+            ]
+        },
+        "2": {
+            "token-delimitators": " ",
+            "protocol": "MQTT",
+            "prefix": "mosquitto_pub -h test.mosquitto.org -p 1885 -t smart-flower-pot/",
+            "buffer-tokens":[
+                {
+                    "name":"Option",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":16,
+                    "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [notification]
+                    "optional": false
+                },
+                {
+                    "name":"Data",
+                    "description":"",
+                    "token-type":"string",
+                    "byte-size":256,
+                    "regex-rule": "-m '[a-zA-Z]*'",
+                    "optional": false
+                }
+            ]
+        }
+    }
+}
