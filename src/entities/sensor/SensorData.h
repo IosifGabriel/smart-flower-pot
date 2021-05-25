@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "../../libs/json.hpp"
+#include "../../utils/JSONUtils.h"
 #include "../request/ChangeSensorSettings.h"
 #include "../request/ChangeSensorValue.h"
 
@@ -89,6 +90,11 @@ public:
 
     void update(ChangeSensorValue value)    {
     	this->value = value.getValue();
+    }
+
+    void update(double value) {
+        this->value = value;
+        // this->updatedAt = JSONUtils::getCurrentDate();
     }
 };
 #endif //SMART_FLOWER_POT_SENSORDATA_H

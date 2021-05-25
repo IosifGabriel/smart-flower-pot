@@ -5,8 +5,13 @@
 #include <mutex>
 #include <string.h>
 #include <mosquitto.h>
+#include "../libs/json.hpp"
+#include "../utils/JSONUtils.h"
+#include "../utils/Constants.h"
+#include "../entities/groundSensor/SensorType.h"
 
 using namespace std;
+using nlohmann::json;
 
 class MqttClient {
 public:

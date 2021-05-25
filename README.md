@@ -6,9 +6,9 @@ Git clone this project in your machine.
 
 ### Prerequisites
 
-You will need to have a C++ compiler. I used g++ that came preinstalled. Check using `g++ -v`
+You will need to have a C++ compiler. We used g++ that came preinstalled. Check using `g++ -v`
 
-You will need to install the [Pistache](https://github.com/pistacheio/pistache) library.
+You will need to install libraries [Pistache](https://github.com/pistacheio/pistache) and  [Eclipse Mosquitto](https://github.com/eclipse/mosquitto).
 
 ### Building
 
@@ -23,4 +23,5 @@ To start the server run\
 
 ## Built With
 
-* [Pistache](https://github.com/pistacheio/pistache) - Web server
+* [Pistache](https://github.com/pistacheio/pistache) - Web Server
+* [Eclipse Mosquitto](https://github.com/eclipse/mosquitto) - MQTT Client
